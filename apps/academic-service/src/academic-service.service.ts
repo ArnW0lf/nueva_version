@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Carrera, CreateCarreraDto } from '@app/common';
 import { Repository } from 'typeorm';
@@ -15,6 +15,17 @@ export class AcademicServiceService {
       where: { activa: true },
       order: { nombre: 'ASC' },
     });
+  }
+
+  async findCarreraById(id: number): Promise<Carrera> {
+    const carrera = await this.carreraRepository.findOne({
+      where: { id },
+    });
+
+    if (!carrera) {
+      throw new NotFoundException(`Carrera con ID ${id} no encontrada.`);
+    }
+    return carrera;
   }
 
   async createCarrera(carreraDto: CreateCarreraDto): Promise<Carrera> {

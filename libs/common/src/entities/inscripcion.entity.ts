@@ -1,28 +1,24 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { DetalleInscripcion } from './detalle-inscripcion.entity';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+} from 'typeorm';
 
 @Entity('inscripcion')
 export class Inscripcion {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'date' })
-    fecha: Date;
-
-    @Column({ type: 'varchar', length: 20, default: 'PENDIENTE' })
-    estado: string;
-
-    // Clave foránea a 'estudiante' en auth_db
     @Column({ name: 'estudiante_id' })
     estudianteId: number;
 
-    // Clave foránea a 'PeriodoAcademico' en scheduling_db
-    @Column({ name: 'periodo_id' })
-    periodoId: number;
+  @Column({ name: 'periodo_id' })
+  periodoId: number;
 
-    @OneToMany(
-        () => DetalleInscripcion,
-        (detalle) => detalle.inscripcion,
-    )
-    detalles: DetalleInscripcion[];
+    @CreateDateColumn({ name: 'fecha_inscripcion' })
+    fechaInscripcion: Date;
+
+    @Column({ type: 'varchar', length: 20, default: 'PENDIENTE' }) // PENDIENTE, CONFIRMADA, ANULADA
+    estado: string;
 }

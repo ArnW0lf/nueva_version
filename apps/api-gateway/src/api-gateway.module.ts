@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AcademicController } from './academic.controller'
+import { AcademicController } from './academic.controller';
+import { AuthController } from './auth.controller';
+import { SchedulingController } from './scheduling.controller';
+
 
 @Module({
   imports: [
@@ -60,7 +63,7 @@ import { AcademicController } from './academic.controller'
       },
     ]),
   ],
-  controllers: [AcademicController],
+  controllers: [AcademicController, AuthController, SchedulingController],
   providers: [],
 })
 export class ApiGatewayModule {}

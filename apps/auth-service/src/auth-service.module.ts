@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { Estudiante, Carrera } from '@app/common';
+import { Estudiante, CommonModule } from '@app/common';
+import { AuthServiceController } from './auth-service.controller';
+import { AuthServiceService } from './auth-service.service';
+import { JwtModule } from '@nestjs/jwt';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -15,19 +17,42 @@ import { Estudiante, Carrera } from '@app/common';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('AUTH_DB_HOST'),
-        port: configService.get<number>('AUTH_DB_PORT'),
-        username: configService.get<string>('AUTH_DB_USERNAME'),
+        host: configService.get('AUTH_DB_HOST'),
+        port: configService.get('AUTH_DB_PORT'),
+        username: configService.get('AUTH_DB_USERNAME'),
         password: configService.get<string>('AUTH_DB_PASSWORD'),
-        database: configService.get<string>('AUTH_DB_NAME'),
+        database: configService.get('AUTH_DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true, // ¡Solo para desarrollo!
+        synchronize: true,
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([Estudiante, Carrera]),
+    TypeOrmModule.forFeature([Estudiante]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
+      }),
+      inject: [ConfigService],
+    }),
+    ClientsModule.registerAsync([
+      {
+        name: 'ACADEMIC_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: 'localhost',
+            port: configService.get<number>('ACADEMIC_SERVICE_PORT'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+    ]),
+    CommonModule,
   ],
-  controllers: [AuthController],
-  providers: [AuthService],
+  controllers: [AuthServiceController],
+  providers: [AuthServiceService],
 })
-export class AuthServiceModule { }
+export class AuthServiceModule {}

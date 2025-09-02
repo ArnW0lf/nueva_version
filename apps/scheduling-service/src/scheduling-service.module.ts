@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { SchedulingServiceController } from './scheduling-service.controller';
-import { SchedulingServiceService } from './scheduling-service.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
@@ -10,6 +8,8 @@ import {
   Horario,
   PeriodoAcademico,
 } from '@app/common';
+import { SchedulingServiceController } from './scheduling-service.controller';
+import { SchedulingServiceService } from './scheduling-service.service';
 
 @Module({
   imports: [
@@ -21,13 +21,13 @@ import {
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('SCHEDULING_DB_HOST'),
-        port: configService.get<number>('SCHEDULING_DB_PORT'),
-        username: configService.get<string>('SCHEDULING_DB_USERNAME'),
+        host: configService.get('SCHEDULING_DB_HOST'),
+        port: configService.get('SCHEDULING_DB_PORT'),
+        username: configService.get('SCHEDULING_DB_USERNAME'),
         password: configService.get<string>('SCHEDULING_DB_PASSWORD'),
-        database: configService.get<string>('SCHEDULING_DB_NAME'),
+        database: configService.get('SCHEDULING_DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true, // ¡Solo para desarrollo!
+        synchronize: true,
       }),
       inject: [ConfigService],
     }),

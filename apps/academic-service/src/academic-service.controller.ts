@@ -16,4 +16,10 @@ export class AcademicServiceController {
   createCarrera(@Payload() createCarreraDto: CreateCarreraDto) {
     return this.academicService.createCarrera(createCarreraDto);
   }
+
+    @MessagePattern('get_carrera_by_id')
+  findCarreraById(@Payload() data: { id: number }) {
+    return this.academicService.findCarreraById(data.id);
+  }
+  
 }

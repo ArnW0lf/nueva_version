@@ -1,11 +1,10 @@
 import {
-  Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
+  Column,
+  BeforeInsert,
 } from 'typeorm';
-import { Carrera } from './carrera.entity';
+import * as bcrypt from 'bcrypt';
 
 @Entity('estudiante')
 export class Estudiante {
@@ -15,7 +14,7 @@ export class Estudiante {
   @Column({ type: 'varchar', length: 20, unique: true, nullable: false })
   registro: string;
 
-  @Column({ type: 'varchar', length: 15, unique: true, nullable: false })
+  @Column({ type: 'varchar', length: 20, unique: true, nullable: false })
   ci: string;
 
   @Column({ type: 'varchar', length: 100, nullable: false })
@@ -24,16 +23,21 @@ export class Estudiante {
   @Column({ type: 'varchar', length: 100, unique: true, nullable: false })
   email: string;
 
-  @Column({ type: 'varchar', length: 20, default: 'ACTIVO' })
-  estado: string;
-
   @Column({ type: 'varchar', length: 255, nullable: false, select: false })
   password: string;
 
-  @Column({ name: 'carrera_id', nullable: true })
+  @Column({ name: 'carrera_id', type: 'int', nullable: false })
   carreraId: number;
 
-  @ManyToOne(() => Carrera, { nullable: true })
-  @JoinColumn({ name: 'carrera_id' })
-  carrera: Carrera;
+  @Column({ type: 'boolean', default: true })
+  activo: boolean;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  async validatePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
+  }
 }

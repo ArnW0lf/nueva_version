@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-    const app = await NestFactory.create(EnrollmentServiceModule);
+  const app = await NestFactory.create(EnrollmentServiceModule);
   const configService = app.get(ConfigService);
 
   app.connectMicroservice({

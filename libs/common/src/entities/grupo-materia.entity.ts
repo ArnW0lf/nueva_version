@@ -1,44 +1,28 @@
-import {
-    Column,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Docente } from './docente.entity';
-import { PeriodoAcademico } from './periodo-academico.entity';
-import { Horario } from './horario.entity';
-import { Aula } from './aula.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('grupo_materia')
 export class GrupoMateria {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'varchar', length: 10 })
-    grupo: string;
+    @Column({ type: 'varchar', length: 20 })
+    nombre: string; // e.g., "Grupo A", "Grupo B"
 
     @Column({ type: 'int' })
-    cupo: number;
+    cupos: number;
 
-    // Esta es una clave foránea a una tabla en otra base de datos.
-    // Solo almacenamos el ID, sin una relación directa de TypeORM.
     @Column({ name: 'materia_id' })
     materiaId: number;
 
-    @ManyToOne(() => Docente)
-    @JoinColumn({ name: 'docente_id' })
-    docente: Docente;
+    @Column({ name: 'docente_id' })
+    docenteId: number;
 
-    @ManyToOne(() => PeriodoAcademico)
-    @JoinColumn({ name: 'periodo_id' })
-    periodo: PeriodoAcademico;
+    @Column({ name: 'periodo_id' })
+    periodoId: number;
 
-    @ManyToOne(() => Horario)
-    @JoinColumn({ name: 'horario_id' })
-    horario: Horario;
+  @Column({ name: 'horario_id' })
+  horarioId: number;
 
-    @ManyToOne(() => Aula)
-    @JoinColumn({ name: 'aula_id' })
-    aula: Aula;
+  @Column({ name: 'aula_id' })
+  aulaId: number;
 }
